@@ -1,0 +1,7 @@
+git clone https://github.com/Shreyas0812/Learn_Graphql_steps.git
+
+npm init
+
+npm i express xpress-graphql graphql
+
+npm i --save-dev nodemon
