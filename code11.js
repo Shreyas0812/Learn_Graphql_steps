@@ -1,5 +1,5 @@
- //Bo0ks and Author example.... we use dummy data, and a new schema ofc
-//Now we just add the authors query in the RootQuery Type, so it's like another node to our existing graph
+ //Books and Author example.... we use dummy data, and a new schema ofc
+//Lets work on getting one sinngle book rather than getting a list of all the authors every time
 const express = require('express')
 const expressGraphQL = require('express-graphql').graphqlHTTP
 
@@ -54,7 +54,12 @@ const AuthorType = new GraphQLObjectType ({
     description: 'This Represents an author of a book',
     fields: () => ({
         id: {type: GraphQLNonNull(GraphQLInt)}, 
-        name: {type: GraphQLNonNull(GraphQLString)}
+        name: {type: GraphQLNonNull(GraphQLString)},
+        books: {type: GraphQLList(BookType),      
+            resolve: (author) => {            
+                return books.filter(book => book.authorId === author.id) 
+            }
+        }
     })
 })
 
@@ -67,10 +72,18 @@ const RootQueryType = new GraphQLObjectType ({
             description: 'List of Books',
             resolve:() => books   
         },
-        authors: {                             // Adding another field called authors
+        authors: {                            
             type: new GraphQLList(AuthorType), 
             description: 'List of all Authors',
             resolve:() => authors   
+        },
+        book: { //We can pass arguments to the queries
+            type: BookType,              //we're returning a single book type 
+            description: 'A single book',
+            args: {
+                id: {type: GraphQLInt}//to pass in the id of the book we want to query
+            },
+            resolve:(parent, args) => books.find(book => book.id === args.id) //arguments will be passed thorugh graphiql, this will get the book with the required id.  
         }
     }) 
 })
@@ -86,12 +99,14 @@ app.use('/graphql', expressGraphQL ({
 
 app.listen(5000, () => console.log('Server is running')) 
 
+//Note: If we had a database, we'll do databsase queries instead of find and filter and all that ofc
+
 /*
 query {
-  authors {
+  book(id:1) {
     name
   }
 }
 */
 
-//Try running this query
+//Try the above query

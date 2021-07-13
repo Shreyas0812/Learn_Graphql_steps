@@ -1,5 +1,5 @@
- //Bo0ks and Author example.... we use dummy data, and a new schema ofc
-//Now we just add the authors query in the RootQuery Type, so it's like another node to our existing graph
+ //Books and Author example.... we use dummy data, and a new schema ofc
+//Lets work on getting one isngle author, same as books rather than getting a list of all the authors every time
 const express = require('express')
 const expressGraphQL = require('express-graphql').graphqlHTTP
 
@@ -54,7 +54,12 @@ const AuthorType = new GraphQLObjectType ({
     description: 'This Represents an author of a book',
     fields: () => ({
         id: {type: GraphQLNonNull(GraphQLInt)}, 
-        name: {type: GraphQLNonNull(GraphQLString)}
+        name: {type: GraphQLNonNull(GraphQLString)},
+        books: {type: GraphQLList(BookType),      
+            resolve: (author) => {            
+                return books.filter(book => book.authorId === author.id) 
+            }
+        }
     })
 })
 
@@ -67,10 +72,26 @@ const RootQueryType = new GraphQLObjectType ({
             description: 'List of Books',
             resolve:() => books   
         },
-        authors: {                             // Adding another field called authors
+        authors: {                            
             type: new GraphQLList(AuthorType), 
             description: 'List of all Authors',
             resolve:() => authors   
+        },
+        book: { 
+            type: BookType,              
+            description: 'A single book',
+            args: {
+                id: {type: GraphQLInt}
+            },
+            resolve:(parent, args) => books.find(book => book.id === args.id)   
+        },
+        author: {                            
+            type: AuthorType, //Single author 
+            description: 'A single author',
+            args: { //arguments
+                id: {type: GraphQLInt}
+            },
+            resolve:(parent, args) => authors.find(author => author.id === args.id)   
         }
     }) 
 })
@@ -88,10 +109,11 @@ app.listen(5000, () => console.log('Server is running'))
 
 /*
 query {
-  authors {
+  author(id:3){
     name
   }
 }
 */
 
-//Try running this query
+//Try running the above query
+//Next we jump into modifying the data and jump into mutations

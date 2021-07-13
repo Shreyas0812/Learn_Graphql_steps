@@ -101,3 +101,5 @@ query {
 //Try this query once the server starts
 
 // Next we're gonna add a autthors Query in
+
+//One thing to note is that fields... retuns a function which returns an object, reason wecan't directly return an object, because BookType Refences AuthorType, and vice versa, so both need to be defined before one another, that's ofcourse not possible, hence the function is necessary, so by putting a function we ensure that they get defined before actually getting called

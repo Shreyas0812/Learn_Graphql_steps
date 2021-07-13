@@ -1,5 +1,5 @@
  //Bo0ks and Author example.... we use dummy data, and a new schema ofc
-//Now we just add the authors query in the RootQuery Type, so it's like another node to our existing graph
+//Now we just add the books field to authors, so that we can see which books the author has written
 const express = require('express')
 const expressGraphQL = require('express-graphql').graphqlHTTP
 
@@ -54,7 +54,12 @@ const AuthorType = new GraphQLObjectType ({
     description: 'This Represents an author of a book',
     fields: () => ({
         id: {type: GraphQLNonNull(GraphQLInt)}, 
-        name: {type: GraphQLNonNull(GraphQLString)}
+        name: {type: GraphQLNonNull(GraphQLString)},
+        books: {type: GraphQLList(BookType),        //New field to show the books written by the author
+            resolve: (author) => {            // Here Author is the parent 
+                return books.filter(book => book.authorId === author.id)   //filtering to get only what we want from that list
+            }
+        }
     })
 })
 
@@ -67,7 +72,7 @@ const RootQueryType = new GraphQLObjectType ({
             description: 'List of Books',
             resolve:() => books   
         },
-        authors: {                             // Adding another field called authors
+        authors: {                            
             type: new GraphQLList(AuthorType), 
             description: 'List of all Authors',
             resolve:() => authors   
@@ -89,9 +94,17 @@ app.listen(5000, () => console.log('Server is running'))
 /*
 query {
   authors {
-    name
+    name,
+    books {
+      name
+    }
   }
 }
 */
 
-//Try running this query
+//Query the above to see
+
+//One single query we're running here
+//In REST API, this would require, one query for author, another one for books for author 1, author 2 and author 3, total 4 queries, plus it'll return us information such as id and authorid of the book, which we don't actually want
+
+//What if we want books for only one author, rather than all of them as a list, we can do that.... next code
