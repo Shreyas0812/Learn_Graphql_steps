@@ -2,8 +2,7 @@
 const express = require('express')
 const expressGraphQL = require('express-graphql').graphqlHTTP
 
-const {
-    GrahQLSchema, 
+const { 
     GraphQLObjectType, 
     GraphQLSchema,
     GraphQLString,
@@ -51,4 +50,4 @@ app.use('/graphql', expressGraphQL ({
 app.listen(5000, () => console.log('Server is running')) 
 
 
-//This code is incomplete, we need to define out ustom Book Type... next file
+//This code is incomplete, we need to define out custom Book Type... next file

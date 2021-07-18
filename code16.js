@@ -1,9 +1,10 @@
- //Books and Author example.... we use dummy data, and a new schema ofc
-//Here we'll see how to add data to authors, same way as we did for books in the last one
+//using fetch
 const express = require('express')
 const expressGraphQL = require('express-graphql').graphqlHTTP
+const fetch = require("node-fetch");
 
 const {
+    GrahQLSchema, 
     GraphQLObjectType, 
     GraphQLSchema,
     GraphQLString,
@@ -118,20 +119,20 @@ const RootMutationType = new GraphQLObjectType({
                 return book 
             }         
         },
-        addAuthor: {             //same as the book
-            type: AuthorType,    //single author added
+        addAuthor: {           
+            type: AuthorType,    
             description: 'Add an Author',
             args: {                                            
                 name: { type: GraphQLNonNull(GraphQLString) }
             },
             resolve: (parent, args) => { 
                 const author = { 
-                    id: authors.length +1,  //automatically setting it to the next index
+                    id: authors.length +1,  
                     name: args.name,
                 }
                 
-                authors.push(author)   //adding to the list 
-                return author      //returning the author
+                authors.push(author)   
+                return author      
             }         
         }
     }) 
@@ -144,48 +145,28 @@ const schema = new GraphQLSchema ({
 
 app.use('/graphql', expressGraphQL ({
     schema: schema, 
-    graphiql: true  
+    //graphiql: true  
 }))
 
+fetch('http://localhost:5000/graphql', {
+    method: 'POST',
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+        query:`
+            query {
+                authors{
+                id
+                name
+                books{
+                    name
+                }
+                }
+            }
+        `
+    })
+})
+.then(res => res.json())
+.then(data => {
+    console.log(data.data)
+})
 app.listen(5000, () => console.log('Server is running')) 
-
-/*
-mutation {
-  addAuthor(name: "Charles Dickens") {
-    id
-    name
-  }
-}
-}
-*/
-
-//and after this
-
-/*
-query {
-    authors {
-        id
-        name
-    }
-*/
-
-//and
-
-/*
-query {
-  authors{
-    id
-    name
-    books{
-      name
-    }
-  }
-}
-*/
-
-//as last author doesn't have any book, it'll show an empty array
-
-//We can also work on update..... but in the database, we can change the data, similar to add function
-
-// In graphql we query exacctly the data we want to query
-//DONE!!!.... Just gonna save the code in other file

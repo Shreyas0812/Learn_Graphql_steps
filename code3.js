@@ -5,9 +5,8 @@ const expressGraphQL = require('express-graphql').graphqlHTTP
 
 //to create a schema,we might need a few diff things from the Graphql library
 const {
-    GrahQLSchema, //Importing Schema
     GraphQLObjectType, //In GraphQl everthins is strongly types, so an objecttype allows you to create a dynamic object full of different other types.Compare it to Structures in C
-    GraphQLSchema,
+    GraphQLSchema, //Importing Schema
     GraphQLString //For strings in graphql
 } = require('graphql')
 

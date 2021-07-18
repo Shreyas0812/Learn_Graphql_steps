@@ -1,4 +1,4 @@
-//we'll work on adding graphql  to our server, we'll wrequire some stuff
+//we'll work on adding graphql  to our server, we'll require some stuff
 
 const express = require('express')
 const expressGraphQL = require('express-graphql').graphqlHTTP
