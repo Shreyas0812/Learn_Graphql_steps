@@ -148,11 +148,11 @@ app.use('/graphql', expressGraphQL ({
     //graphiql: true  
 }))
 
-fetch('http://localhost:5000/graphql', {
-    method: 'POST',
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-        query:`
+fetch('http://localhost:5000/graphql', {   //fetch data to see 
+    method: 'POST',                        //method, we need to post to the graphql api to get some result right, this will be analysed in ".then" ahead
+    headers: {"Content-Type":"application/json"}, //not compulsary to put it, this is just because we know the content type, might be useful later
+    body: JSON.stringify({   //This is the main body, JSON.stringify converts a JavaScirpt Object or value to a JSON string.... there are other parameters... see documentation, not used here
+        query:`            
             query {
                 authors{
                 id
@@ -162,11 +162,18 @@ fetch('http://localhost:5000/graphql', {
                 }
                 }
             }
-        `
+        `                     //The entire query that needs to be put on the website, needs to be put under 'query' variable
     })
 })
-.then(res => res.json())
-.then(data => {
+.then(res => res.json())         //The result of last function is put in the first argument, here res.........res.json() converts the string to proper json format to be used
+.then(data => {                  // this json is put in data, aand is printed in console .log, first data is orange which is used, inside it, everything is stored in one key value pair, main key is called 'data' again
     console.log(data.data)
+    console.log(data.data.authors)   //printing what is inside data kay... inside that authors key... this is a list
+
+    //using this array with forEach
+    data.data.authors.forEach(element => {  //using forEach to loop through each element, again key-value logic
+        console.log(element.name)
+        console.log(element.books)
+    });
 })
 app.listen(5000, () => console.log('Server is running')) 
